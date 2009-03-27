@@ -1,12 +1,12 @@
 from urllib import urlopen, urlencode
 try:
-        import simplejson as json
+    import simplejson as json
 except ImportError:
-        import json
+    import json
 
 
 class Etsy(object):
-    base_url = "http://beta-api.etsy.com/v1/"
+    base_url = "http://beta-api.etsy.com/v1"
 
     def __init__(self, api_key):
         self.__api_key = api_key
@@ -88,8 +88,8 @@ class Etsy(object):
         r = self._make_call(path, {})
         return r['results']
 
-    def getFavorersOfUser(self, user_id, **params):
-        path = '/users/%s/favorers' % user_id
+    def getFavorersOfShop(self, user_id, **params):
+        path = '/shops/%s/favorers' % user_id
         r = self._make_call(path, params)
         return [EtsyUser(self, u) for u in r['results']]
 
@@ -135,7 +135,6 @@ class Etsy(object):
 
 def getAll(func, max_ret = None, **params):
     max_pag = 50
-    cur_pag = 0
     cur_offset = 0
     n_returned = 50
     ret = []
@@ -146,7 +145,6 @@ def getAll(func, max_ret = None, **params):
         ret += r
 
     return ret
-
 
 class EtsyResource (object):
     def __init__(self, etsy, d):
@@ -168,9 +166,6 @@ class EtsyListing(EtsyResource):
         return self.etsy.getFavorersOfListing(self.listing_id, **params)
 
 class EtsyUser(EtsyResource):
-    def getFavorers(self, **params):
-        return self.etsy.getFavorersOfUser(self.user_id, **params)
-
     def getFavoriteListings(self, **params):
         return self.etsy.getFavoriteListingsOfUser(self.user_id, **params)
 
@@ -181,6 +176,9 @@ class EtsyUser(EtsyResource):
         return self.etsy.getShopDetails(self.user_id, **params)
 
 class EtsyShop(EtsyUser):
+    def getFavorers(self, **params):
+        return self.etsy.getFavorersOfShop(self.user_id, **params)
+
     def getListings(self, **params):
         return self.etsy.getListings(self.user_id, **params)
 

@@ -1,23 +1,22 @@
-from etsy import Etsy
+from etsy import Etsy, getAll
+from os import environ
 
-e = Etsy("YOUR API KEY HERE")
+e = Etsy(environ.get("ETSY_API_KEY", "YOUR API KEY HERE"))
 
-# get my User object:
-me = e.getUserDetails('muffinshop')
+# get my Shop 
+s = e.getShopDetails('mck254')
 
-print "people who favor %s" % me.user_name
+print "people who favor the shop %s" % s.user_name
 print
 
 #iterate through people that favorite me:
-for f in me.getFavorers():
+for f in s.getFavorers():
     if f.status != 'private':
         print f.user_name
 
 print
-print "%s's listings" % me.user_name
+print "%s's listings" % s.user_name
 print
-#get my shop
-s = me.getShopDetails()
 
 #iterate through my listings
 for l in s.getListings():
@@ -26,6 +25,6 @@ for l in s.getListings():
 
 #Now, let's get all the mike's on etsy
 
-mikes = etsy.getAll(e.getUsersByName, search_name='mike')
+mikes = getAll(e.getUsersByName, search_name='mike')
 
 print "We found %d Mikes" % len(mikes)
